@@ -10,6 +10,7 @@ export default class Game {
   public draw:number = 0;
   private totalScore:number = 0;
   public winner: string = "";
+  public roundFinished: boolean = false;
   public winnerPattern: number[] = []
   public turn: Turns = 0;
   public boardPattern: number[][] = [
@@ -113,6 +114,7 @@ export default class Game {
       if(this.turn === 2 && this.winningPatterns.some( pattern => pattern.every( (p,index,array) => { this.winnerPattern = array;  return this.player2Pattern.includes(p)}))){
         this.p2Score++;
         this.totalScore += 1;
+        this.roundFinished = true
         setTimeout(()=>{
           this.nextRound();
         },1500)
@@ -120,12 +122,14 @@ export default class Game {
        }else if(this.turn === 1 && this.winningPatterns.some( pattern => pattern.every( (p,index,array) => { this.winnerPattern = array;  return this.player1Pattern.includes(p)}))){
         this.p1Score++;
         this.totalScore += 1;
+        this.roundFinished = true
         setTimeout(()=>{
           this.nextRound();
         },1500)
     }else if(this.remained.length < 1){
       this.draw++;
       this.totalScore += 1;
+      this.roundFinished = true
       setTimeout(()=>{
         this.nextRound();
       },1500)
@@ -157,6 +161,7 @@ export default class Game {
     this.draw = 0;
     this.totalScore = 0;
     this.winner = "";
+    this.roundFinished = false
     this.player2Pattern = [];
     this.player1Pattern = [];
     this.multiplayer = this.multiplayer;
@@ -169,5 +174,6 @@ export default class Game {
     this.remained = [...this.boxes]
     this.player2Pattern = [];
     this.player1Pattern = [];
+    this.roundFinished = false
   }
 }

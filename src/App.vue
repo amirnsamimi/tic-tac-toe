@@ -41,8 +41,10 @@ const reloadGame = ():void=>{
   window.location.reload()
 }
 
+
+
 watchEffect(()=>{
-  console.log(multiplayer.value)
+  console.log(game.winnerPattern)
 })
 
 </script>
@@ -108,13 +110,15 @@ watchEffect(()=>{
       <template v-for="(box, col) in pattern" :key="col">
         <template v-if="row === 0">
           <button
-            :class="`w-48 h-48 b-border ${
+            :class=" ` w-48 h-48 b-border ${
               col === 0 ? 'r-border' : col === 1 ? 'rl-border' : 'l-border'
             }`"
             :disabled="game.p2Pattern(box) || game.p1Pattern(box) || loading"
             @click.prevent="clickHandler(box)"
           >
             <div
+            :style="`${ ( game.roundFinished && !game.winnerPattern.includes(box) ) && 'opacity:0.3' }`"
+
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -134,6 +138,7 @@ watchEffect(()=>{
             @click.prevent="clickHandler(box)"
           >
             <div
+            :style="`${ game.roundFinished && !game.winnerPattern.includes(box) && 'opacity:0.3' }`"
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -153,6 +158,8 @@ watchEffect(()=>{
             @click.prevent="clickHandler(box)"
           >
             <div
+            :style="`${  game.roundFinished && !game.winnerPattern.includes(box) && 'opacity:0.3' }`"
+
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -206,7 +213,7 @@ watchEffect(()=>{
   </footer>
 </template>
 
-<style>
+<style scoped>
 
 input[type="checkbox"]{
   display: none;
