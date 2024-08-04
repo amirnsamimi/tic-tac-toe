@@ -5,23 +5,22 @@ import { onMounted, reactive, ref, watchEffect } from "vue";
 import Game from "./lib/game";
 import type { clientState } from "./lib/definitions";
 
-
 const game = reactive(new Game("player1", "player2"));
 const loading = ref<boolean>(false);
-const state = ref<clientState>(0)
-const players = ref<{[key:string]:string}>({player1:"",player2:""});
-const multiplayer = ref<boolean>(false)
+const state = ref<clientState>(0);
+const players = ref<{ [key: string]: string }>({ player1: "", player2: "" });
+const multiplayer = ref<boolean>(false);
 
 onMounted(() => {
   game.init();
   game.gameHandler(0);
 });
 
-const gameInit = ():void => {
-  game.init(players.value.player1,players.value.player2);
+const gameInit = (): void => {
+  game.init(players.value.player1, players.value.player2);
   game.multiplayer = multiplayer.value;
-  state.value = 2
-}
+  state.value = 2;
+};
 
 const clickHandler = (box: number): void => {
   if (!game.multiplayer) {
@@ -38,16 +37,13 @@ const loadingConcept = (): void => {
   }, 1000);
 };
 
-const reloadGame = ():void=>{
-  window.location.reload()
-}
+const reloadGame = (): void => {
+  window.location.reload();
+};
 
-
-
-watchEffect(()=>{
-  console.log(game.winnerPattern)
-})
-
+watchEffect(() => {
+  console.log(game.winnerPattern);
+});
 </script>
 <!-- ask about .once and disable -->
 <template>
@@ -55,18 +51,27 @@ watchEffect(()=>{
     <form @submit.prevent="gameInit" class="grid gap-8">
       <label class="items-start">
         multiplayer
-        <input v-model="multiplayer" type="checkbox">
+        <input v-model="multiplayer" type="checkbox" />
         <div class="checkbox-faker"></div>
       </label>
       <label>
-        palyer1 Name 
-      <input v-model="players['player1']" type="text" >
-    </label>
-    <label>
+        palyer1 Name
+        <input v-model="players['player1']" type="text" />
+      </label>
+      <label>
         palyer2 Name
-      <input :disabled="!multiplayer"  v-model="players['player2']" type="text" >
-    </label>
-    <button class="text-black py-2 px-4 bg-emerald-800 rounded-md font-bold" type="submit"> Submit </button>
+        <input
+          :disabled="!multiplayer"
+          v-model="players['player2']"
+          type="text"
+        />
+      </label>
+      <button
+        class="text-black py-2 px-4 bg-emerald-800 rounded-md font-bold"
+        type="submit"
+      >
+        Submit
+      </button>
     </form>
   </main>
   <main v-else-if="state === 2" class="grid gap relative">
@@ -80,8 +85,6 @@ watchEffect(()=>{
           src="https://tifin.com/wp-content/uploads/TIFIN-BRAIN-1000PX.gif"
           alt="brain"
         />
-
-     
       </div>
       <div
         v-else
@@ -95,10 +98,9 @@ watchEffect(()=>{
         </div>
         <div v-else class="flex justify-center text-white tracking-widest">
           <span v-if="game.turn === 1"> {{ game.player1 }}'s turn</span>
-          <span v-else> {{ game.player2 }}'s turn</span> 
+          <span v-else> {{ game.player2 }}'s turn</span>
         </div>
       </div>
-      
     </div>
     <!-- <div class="flex justify-center mb-16">
     <button class="flex justify-center w-32 bg-white py-2 px-4 rounded-lg"> Restart Game</button>
@@ -111,15 +113,18 @@ watchEffect(()=>{
       <template v-for="(box, col) in pattern" :key="col">
         <template v-if="row === 0">
           <button
-            :class=" ` w-48 h-48 b-border ${
+            :class="` w-48 h-48 b-border ${
               col === 0 ? 'r-border' : col === 1 ? 'rl-border' : 'l-border'
             }`"
             :disabled="game.p2Pattern(box) || game.p1Pattern(box) || loading"
             @click.prevent="clickHandler(box)"
           >
             <div
-            :style="`${ ( game.roundFinished && !game.winnerPattern.includes(box) ) && 'opacity:0.3' }`"
-
+              :style="`${
+                game.roundFinished &&
+                !game.winnerPattern.includes(box) &&
+                'opacity:0.3'
+              }`"
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -139,7 +144,11 @@ watchEffect(()=>{
             @click.prevent="clickHandler(box)"
           >
             <div
-            :style="`${ game.roundFinished && !game.winnerPattern.includes(box) && 'opacity:0.3' }`"
+              :style="`${
+                game.roundFinished &&
+                !game.winnerPattern.includes(box) &&
+                'opacity:0.3'
+              }`"
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -159,8 +168,11 @@ watchEffect(()=>{
             @click.prevent="clickHandler(box)"
           >
             <div
-            :style="`${  game.roundFinished && !game.winnerPattern.includes(box) && 'opacity:0.3' }`"
-
+              :style="`${
+                game.roundFinished &&
+                !game.winnerPattern.includes(box) &&
+                'opacity:0.3'
+              }`"
               :class="`${
                 game.p1Pattern(box)
                   ? 'cross'
@@ -176,7 +188,7 @@ watchEffect(()=>{
     <div
       class="text-white w-full flex mb-8 justify-center mt-16 gap-16 text-[1.5rem]"
     >
-      <div :class="`text-center  ${game.turn === 2  && 'text-gray-500'}`">
+      <div :class="`text-center  ${game.turn === 2 && 'text-gray-500'}`">
         <div>{{ game.player1 }} ( X )</div>
         <div>{{ game.p1Score }}</div>
       </div>
@@ -184,7 +196,10 @@ watchEffect(()=>{
         <div>Draws</div>
         <div>{{ game.draw }}</div>
       </div>
-      <div v-if="game.multiplayer" :class="`text-center  ${game.turn === 1 && 'text-gray-500'}`">
+      <div
+        v-if="game.multiplayer"
+        :class="`text-center  ${game.turn === 1 && 'text-gray-500'}`"
+      >
         <div>{{ game.player2 }} ( O )</div>
         <div>{{ game.p2Score }}</div>
       </div>
@@ -200,10 +215,25 @@ watchEffect(()=>{
         </button>
       </div>
     </div>
-    <div v-if="game.winner.length > 0" class= "text-white absolute flex flex-col justify-center items-center w-full h-full bg-black">
+    <div
+      v-if="game.winner.length > 0"
+      class="text-white absolute flex flex-col justify-center items-center w-full h-full bg-black"
+    >
       {{ game.winner }} win the game!
-    <div>      <button class=" w-full text-black py-2 px-4 mt-8 bg-emerald-800 rounded-md font-bold" @click.prevent="game.reset()"> restart game </button>
-      <button class=" w-full text-white py-2 px-4 mt-8 border border-emerald-800 rounded-md font-light" @click.prevent="reloadGame"> choose players </button> </div> 
+      <div>
+        <button
+          class="w-full text-black py-2 px-4 mt-8 bg-emerald-800 rounded-md font-bold"
+          @click.prevent="game.reset()"
+        >
+          restart game
+        </button>
+        <button
+          class="w-full text-white py-2 px-4 mt-8 border border-emerald-800 rounded-md font-light"
+          @click.prevent="reloadGame"
+        >
+          choose players
+        </button>
+      </div>
     </div>
   </main>
 
@@ -215,34 +245,33 @@ watchEffect(()=>{
 </template>
 
 <style scoped>
-
-input[type="checkbox"]{
+input[type="checkbox"] {
   display: none;
 }
 
-input[type="checkbox"] ~ .checkbox-faker{
+input[type="checkbox"] ~ .checkbox-faker {
   background-color: transparent;
   height: 20px;
   width: 20px;
   border: 1px solid white;
   border-radius: 4px;
 }
-input[type="checkbox"]:checked ~ .checkbox-faker{
-  background-color: rgb(6,95,70);
+input[type="checkbox"]:checked ~ .checkbox-faker {
+  background-color: rgb(6, 95, 70);
   height: 20px;
   width: 20px;
-  border: 1px solid rgb(6,95,70);
+  border: 1px solid rgb(6, 95, 70);
   border-radius: 4px;
 }
 
-label{
+label {
   color: white;
   display: flex;
   flex-direction: column;
-  gap:1rem;
+  gap: 1rem;
 }
 
-input{
+input {
   background-color: transparent;
   color: white;
   padding: 0.5rem 1rem;
@@ -250,7 +279,7 @@ input{
   border: white 1px solid;
 }
 
-input:disabled{
+input:disabled {
   background-color: rgba(38, 38, 38, 0.481);
   color: white;
   padding: 0.5rem 1rem;
