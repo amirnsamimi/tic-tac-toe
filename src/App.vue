@@ -5,27 +5,19 @@ import { onMounted, reactive, ref, watch, watchEffect } from "vue";
 import Game from "./lib/game";
 import { Turns } from "./lib/definitions";
 
-const state = ref<Turns>(2);
-const loading = ref<boolean>(false);
 const game = reactive(new Game("Amir", "Javid"));
+const loading = ref<boolean>(false);
 
 onMounted(() => {
   game.init();
   game.gameHandler(0);
-  state.value = 2;
 });
 
 const clickHandler = (box: number): void => {
-  console.log(state.value);
   if (!game.multiplayer) {
     loadingConcept();
-  } else {
-    if (state.value == 1) {
-      state.value = 2;
-    } else {
-      state.value = 1;
-    }
   }
+
   game.gameHandler(box);
 };
 
@@ -33,15 +25,8 @@ const loadingConcept = (): void => {
   loading.value = true;
   setTimeout(() => {
     loading.value = false;
-    if (state.value === 2) {
-      state.value = 1;
-    }
   }, 1000);
 };
-
-watchEffect(() => {
-  console.log(state.value);
-});
 </script>
 <!-- ask about .once and disable -->
 <template>
@@ -72,7 +57,8 @@ watchEffect(() => {
           your turn
         </div>
         <div v-else class="flex justify-center text-white tracking-widest">
-          player {{ state }} turn
+          <span v-if="game.turn === 1"> {{ game.player1 }}'s turn</span>
+          <span v-else> {{ game.player2 }}'s turn</span> 
         </div>
       </div>
     </div>
@@ -92,9 +78,9 @@ watchEffect(() => {
           >
             <div
               :class="`${
-                game.p2Pattern(box)
+                game.p1Pattern(box)
                   ? 'cross'
-                  : game.p1Pattern(box)
+                  : game.p2Pattern(box)
                   ? 'circle'
                   : ''
               }`"
@@ -111,9 +97,9 @@ watchEffect(() => {
           >
             <div
               :class="`${
-                game.p2Pattern(box)
+                game.p1Pattern(box)
                   ? 'cross'
-                  : game.p1Pattern(box)
+                  : game.p2Pattern(box)
                   ? 'circle'
                   : ''
               }`"
@@ -130,9 +116,9 @@ watchEffect(() => {
           >
             <div
               :class="`${
-                game.p2Pattern(box)
+                game.p1Pattern(box)
                   ? 'cross'
-                  : game.p1Pattern(box)
+                  : game.p2Pattern(box)
                   ? 'circle'
                   : ''
               }`"

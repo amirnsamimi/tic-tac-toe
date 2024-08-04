@@ -78,7 +78,7 @@ export default class Game {
       }
     } else {
         this.randomBox();
-        this.turn = 1;
+        this.turn = 2;
     }
   }
 
