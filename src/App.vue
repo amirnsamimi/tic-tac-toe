@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import multi from "@/assets/multi.svg";
 import one from "@/assets/one.svg";
-import { onMounted, reactive, ref, watch, watchEffect } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import Game from "./lib/game";
-import { Turns } from "./lib/definitions";
+
 
 const game = reactive(new Game("Amir", "Javid"));
 const loading = ref<boolean>(false);
@@ -31,20 +31,18 @@ const loadingConcept = (): void => {
 <!-- ask about .once and disable -->
 <template>
   <main class="grid gap">
-    <div class="h-48 mb-32">
+    <div class="min-h-32 mb-16">
       <div
         v-if="loading"
         class="rounded-full mx-auto my-auto grid text-center items-center justify-center"
       >
         <img
-          class="w-48 h-48"
+          class="w-32"
           src="https://tifin.com/wp-content/uploads/TIFIN-BRAIN-1000PX.gif"
           alt="brain"
         />
 
-        <div class="flex justify-center text-white tracking-widest">
-          wait for computer
-        </div>
+     
       </div>
       <div
         v-else
@@ -61,7 +59,11 @@ const loadingConcept = (): void => {
           <span v-else> {{ game.player2 }}'s turn</span> 
         </div>
       </div>
+      
     </div>
+    <!-- <div class="flex justify-center mb-16">
+    <button class="flex justify-center w-32 bg-white py-2 px-4 rounded-lg"> Restart Game</button>
+  </div> -->
     <div
       class="flex gap"
       v-for="(pattern, row) in game.boardPattern"
