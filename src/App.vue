@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import multi from "@/assets/multi.svg";
 import one from "@/assets/one.svg";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watchEffect } from "vue";
 import Game from "./lib/game";
+import type { clientState } from "./lib/definitions";
 
 
-const game = reactive(new Game("Amir", "Javid"));
+const game = reactive(new Game("player1", "player2"));
 const loading = ref<boolean>(false);
+const state = ref<clientState>(0)
+const players = ref<{[key:string]:string}>({player1:"",player2:""});
+const multiplayer = ref<boolean>(false)
 
 onMounted(() => {
   game.init();
   game.gameHandler(0);
 });
+
+const gameInit = ():void => {
+  game.init(players.value.player1,players.value.player2);
+  state.value = 2
+}
 
 const clickHandler = (box: number): void => {
   if (!game.multiplayer) {
@@ -27,10 +36,37 @@ const loadingConcept = (): void => {
     loading.value = false;
   }, 1000);
 };
+
+const reloadGame = ():void=>{
+  window.location.reload()
+}
+
+watchEffect(()=>{
+  console.log(multiplayer.value)
+})
+
 </script>
 <!-- ask about .once and disable -->
 <template>
-  <main class="grid gap">
+  <main v-if="state === 0">
+    <form @submit.prevent="gameInit" class="grid gap-8">
+      <label class="items-start">
+        multiplayer
+        <input v-model="multiplayer" type="checkbox">
+        <div class="checkbox-faker"></div>
+      </label>
+      <label>
+        palyer1 Name 
+      <input v-model="players['player1']" type="text" >
+    </label>
+    <label>
+        palyer2 Name
+      <input :disabled="multiplayer"  v-model="players['player2']" type="text" >
+    </label>
+    <button class="text-black py-2 px-4 bg-emerald-800 rounded-md font-bold" type="submit"> Submit </button>
+    </form>
+  </main>
+  <main v-else-if="state === 2" class="grid gap relative">
     <div class="min-h-32 mb-16">
       <div
         v-if="loading"
@@ -132,19 +168,19 @@ const loadingConcept = (): void => {
     <div
       class="text-white w-full flex mb-8 justify-center mt-16 gap-16 text-[1.5rem]"
     >
-      <div class="text-center">
+      <div :class="`text-center  ${game.turn === 2  && 'text-gray-500'}`">
         <div>{{ game.player1 }} ( X )</div>
         <div>{{ game.p1Score }}</div>
       </div>
-      <div class="text-center">
+      <div class="text-center text-gray-500">
         <div>Draws</div>
-        <div>{{ game.p1Score }}</div>
+        <div>{{ game.draw }}</div>
       </div>
-      <div v-if="game.multiplayer" class="text-center">
+      <div v-if="game.multiplayer" :class="`text-center  ${game.turn === 1 && 'text-gray-500'}`">
         <div>{{ game.player2 }} ( O )</div>
         <div>{{ game.p2Score }}</div>
       </div>
-      <div v-else class="text-center">
+      <div v-else :class="`text-center  ${game.turn === 1 && 'text-gray-500'}`">
         <div>Computer ( O )</div>
         <div>{{ game.p2Score }}</div>
       </div>
@@ -156,6 +192,11 @@ const loadingConcept = (): void => {
         </button>
       </div>
     </div>
+    <div v-if="game.winner.length > 0" class= "text-white absolute flex flex-col justify-center items-center w-full h-full bg-black">
+      {{ game.winner }} win the game!
+    <div>      <button class=" w-full text-black py-2 px-4 mt-8 bg-emerald-800 rounded-md font-bold" @click.prevent="game.reset()"> restart game </button>
+      <button class=" w-full text-white py-2 px-4 mt-8 border border-emerald-800 rounded-md font-light" @click.prevent="reloadGame"> choose players </button> </div> 
+    </div>
   </main>
 
   <footer
@@ -166,6 +207,49 @@ const loadingConcept = (): void => {
 </template>
 
 <style>
+
+input[type="checkbox"]{
+  display: none;
+}
+
+input[type="checkbox"] ~ .checkbox-faker{
+  background-color: transparent;
+  height: 20px;
+  width: 20px;
+  border: 1px solid white;
+  border-radius: 4px;
+}
+input[type="checkbox"]:checked ~ .checkbox-faker{
+  background-color: rgb(6,95,70);
+  height: 20px;
+  width: 20px;
+  border: 1px solid rgb(6,95,70);
+  border-radius: 4px;
+}
+
+label{
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap:1rem;
+}
+
+input{
+  background-color: transparent;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: white 1px solid;
+}
+
+input:disabled{
+  background-color: rgba(38, 38, 38, 0.481);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: rgba(38, 38, 38, 0.481) 1px solid;
+}
+
 button {
   display: flex;
   justify-content: center;

@@ -7,6 +7,8 @@ export default class Game {
   public player2: string = "";
   public p1Score: number = 0;
   public p2Score: number = 0;
+  public draw:number = 0;
+  private totalScore:number = 0;
   public winner: string = "";
   public turn: Turns = 0;
   public boardPattern: number[][] = [
@@ -59,27 +61,73 @@ export default class Game {
           this.player1Pattern.push(box);
         const clickedIndex = this.remained.findIndex((i) => i === box);
         this.remained.splice(clickedIndex, 1);
+        this.checkWinner()
           this.turn = 2;
         } else {
           this.player2Pattern.push(box);
         const clickedIndex = this.remained.findIndex((i) => i === box);
         this.remained.splice(clickedIndex, 1);
+        this.checkWinner()
           this.turn = 1;
         }
       } else {
         this.player1Pattern.push(box);
         const clickedIndex = this.remained.findIndex((i) => i === box);
         this.remained.splice(clickedIndex, 1);
+        this.checkWinner()
         this.turn = 2;
         setTimeout(() => {
           this.randomBox();
+          this.checkWinner()
           this.turn = 1;
         }, 1000);
       }
     } else {
         this.randomBox();
-        this.turn = 2;
+        this.checkWinner()
+        this.turn = 1;
+        
     }
+
+   
+
+  }
+
+  private checkWinner():void{
+
+    if(this.totalScore >= 5){
+      if( this.p1Score > this.p2Score){
+        this.winner = this.player1
+      }else if(this.p1Score < this.p2Score){
+        this.winner = this.player2
+      }else{
+        this.winner = "Draw!"
+      }
+     
+      
+    }else{
+      if(this.turn === 2 && this.winningPatterns.some( pattern => pattern.every( p => this.player2Pattern.includes(p)))){
+        this.p2Score++;
+        this.totalScore += 1;
+
+        setTimeout(()=>{
+          this.nextRound();
+        },1500)
+      
+       }else if(this.turn === 1 && this.winningPatterns.some( pattern => pattern.every( p => this.player1Pattern.includes(p)))){
+        this.p1Score++;
+        this.totalScore += 1;
+        setTimeout(()=>{
+          this.nextRound();
+        },1500)
+    }else if(this.remained.length < 1){
+      this.draw++;
+      this.totalScore += 1;
+      setTimeout(()=>{
+        this.nextRound();
+      },1500)
+    }
+  }
   }
 
   public init(p1?: string, p2?: string): void {
@@ -88,6 +136,8 @@ export default class Game {
     this.player2 = p2 || this.player2;
     this.p1Score = 0;
     this.p2Score = 0;
+    this.draw = 0;
+    this.totalScore = 0;
     this.winner = "";
     this.player2Pattern = [];
     this.player1Pattern = [];
@@ -96,11 +146,22 @@ export default class Game {
 
   public reset(): void {
     this.boxes = this.boardPattern.flat();
+    this.remained = [...this.boxes]
     this.p1Score = 0;
     this.p2Score = 0;
+    this.draw = 0;
+    this.totalScore = 0;
     this.winner = "";
     this.player2Pattern = [];
     this.player1Pattern = [];
     this.multiplayer = this.multiplayer;
+  }
+
+
+  public nextRound():void{
+    this.boxes = this.boardPattern.flat();
+    this.remained = [...this.boxes]
+    this.player2Pattern = [];
+    this.player1Pattern = [];
   }
 }

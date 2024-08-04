@@ -3,3 +3,11 @@ export enum Turns {
     Player1,
     Player2,
   }
+
+  export enum clientState{
+    names = 0,
+    edit,
+    playing,
+    winners,
+
+  } 
