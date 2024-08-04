@@ -52,7 +52,7 @@ export default class Game {
     return this.player1Pattern.some((i) => i === input);
   }
   public gameHandler(box: number): void {
-    console.log(this.turn)
+   
     if (this.turn !== 0) {
       if (this.multiplayer) {
         if (this.turn === 1) {

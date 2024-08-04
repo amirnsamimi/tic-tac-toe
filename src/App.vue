@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import multi from "@/assets/multi.svg";
 import one from "@/assets/one.svg";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch, watchEffect } from "vue";
 import Game from "./lib/game";
 import { Turns } from "./lib/definitions";
 
@@ -12,22 +12,36 @@ const game = reactive(new Game("Amir", "Javid"));
 onMounted(() => {
   game.init();
   game.gameHandler(0);
-  state.value = 1;
+  state.value = 2;
 });
 
 const clickHandler = (box: number): void => {
-  state.value = 2;
-  loadingConcept();
+  console.log(state.value);
+  if (!game.multiplayer) {
+    loadingConcept();
+  } else {
+    if (state.value == 1) {
+      state.value = 2;
+    } else {
+      state.value = 1;
+    }
+  }
   game.gameHandler(box);
-
 };
 
 const loadingConcept = (): void => {
-  loading.value = true
-  setTimeout(()=>{
-  loading.value = false;
-  },1000)
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+    if (state.value === 2) {
+      state.value = 1;
+    }
+  }, 1000);
 };
+
+watchEffect(() => {
+  console.log(state.value);
+});
 </script>
 <!-- ask about .once and disable -->
 <template>
@@ -47,6 +61,20 @@ const loadingConcept = (): void => {
           wait for computer
         </div>
       </div>
+      <div
+        v-else
+        class="rounded-full mx-auto my-auto grid text-center items-center justify-center"
+      >
+        <div
+          v-if="!game.multiplayer"
+          class="flex justify-center text-white tracking-widest"
+        >
+          your turn
+        </div>
+        <div v-else class="flex justify-center text-white tracking-widest">
+          player {{ state }} turn
+        </div>
+      </div>
     </div>
     <div
       class="flex gap"
@@ -59,9 +87,7 @@ const loadingConcept = (): void => {
             :class="`w-48 h-48 b-border ${
               col === 0 ? 'r-border' : col === 1 ? 'rl-border' : 'l-border'
             }`"
-            :disabled="
-              (game.p2Pattern(box) || game.p1Pattern(box)) || (loading)
-            "
+            :disabled="game.p2Pattern(box) || game.p1Pattern(box) || loading"
             @click.prevent="clickHandler(box)"
           >
             <div
@@ -80,9 +106,7 @@ const loadingConcept = (): void => {
             :class="`w-48 h-48 b-border t-border ${
               col === 0 ? 'r-border' : col === 1 ? 'rl-border' : 'l-border'
             }`"
-            :disabled="
-              (game.p2Pattern(box) || game.p1Pattern(box))|| (loading)
-            "
+            :disabled="game.p2Pattern(box) || game.p1Pattern(box) || loading"
             @click.prevent="clickHandler(box)"
           >
             <div
@@ -101,9 +125,7 @@ const loadingConcept = (): void => {
             :class="`w-48 h-48  t-border ${
               col === 0 ? 'r-border' : col === 1 ? 'rl-border' : 'l-border'
             }`"
-            :disabled="
-              (game.p2Pattern(box) || game.p1Pattern(box)) || (loading)
-            "
+            :disabled="game.p2Pattern(box) || game.p1Pattern(box) || loading"
             @click.prevent="clickHandler(box)"
           >
             <div
