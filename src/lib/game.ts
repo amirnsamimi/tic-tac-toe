@@ -129,6 +129,7 @@ export default class Game {
     }else if(this.remained.length < 1){
       this.draw++;
       this.totalScore += 1;
+      this.winnerPattern = []
       this.roundFinished = true
       setTimeout(()=>{
         this.nextRound();

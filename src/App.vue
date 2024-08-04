@@ -19,6 +19,7 @@ onMounted(() => {
 
 const gameInit = ():void => {
   game.init(players.value.player1,players.value.player2);
+  game.multiplayer = multiplayer.value;
   state.value = 2
 }
 
@@ -63,7 +64,7 @@ watchEffect(()=>{
     </label>
     <label>
         palyer2 Name
-      <input :disabled="multiplayer"  v-model="players['player2']" type="text" >
+      <input :disabled="!multiplayer"  v-model="players['player2']" type="text" >
     </label>
     <button class="text-black py-2 px-4 bg-emerald-800 rounded-md font-bold" type="submit"> Submit </button>
     </form>
